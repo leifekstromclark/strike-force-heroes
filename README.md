@@ -21,4 +21,6 @@ Things to figure out:
 
 What are the most efficient ways to check for collisions, and what geometry can we choose to optimize this process?
 
-When a collision is detected between an possibly unaligned soldier and arbitrary terrain how can we reposition the soldier just out of the terrain efficiently?
+When a collision is detected between an possibly unaligned soldier and arbitrary terrain how can we reposition the soldier just out of the terrain efficiently?"
+
+Client side prediction.
