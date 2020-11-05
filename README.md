@@ -9,6 +9,7 @@ Strike Force Heroes, a Flash game made by Armor Games and Not Doppler, will be a
 
 ## Current Plans (As of Nov. 4)
 (The following is speculation and subject to change)
+
 The game should be browser based like its predecessors. This will likely be done through javascript and some version of webgl. Right now I am considering pixi.js due to its speed.
 
 Multiplayer is a priority, though I am unsure what language and libraries to use for backend.
