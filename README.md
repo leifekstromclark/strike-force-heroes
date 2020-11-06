@@ -8,7 +8,7 @@ In July 2017, [Adode announced that Flash player will be discontinued after Dece
 Strike Force Heroes, a Flash game made by Armor Games and Not Doppler, will be affected by this announcement. Therefore, Leif Clark (first initiator) wanted to make a sort of tribute to this game.
 
 ## Nov. 6
-Progress has been made on collision detection and response. The current algorithm, however, may be unnessesarily powerful and yield unwanted behaviour in some cases. It will be tweaked.
+Progress has been made on collision detection and response. The current algorithm, however, may be unnessesarily powerful and yield unwanted behaviour in some cases. It will be tweaked. Variations may also be created for certain cases.
 
 ## Nov. 4
 
