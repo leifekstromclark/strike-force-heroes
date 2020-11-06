@@ -7,8 +7,10 @@ In July 2017, [Adode announced that Flash player will be discontinued after Dece
 
 Strike Force Heroes, a Flash game made by Armor Games and Not Doppler, will be affected by this announcement. Therefore, Leif Clark (first initiator) wanted to make a sort of tribute to this game.
 
-## Current Plans (As of Nov. 4)
-(The following is speculation and subject to change)
+## Nov. 6
+Progress has been made on collision detection and response. The current algorithm, however, may be unnessesarily powerful and yield unwanted behaviour in some cases. It will be tweaked.
+
+## Nov. 4
 
 The game should be browser based like its predecessors. This will likely be done through javascript and some version of webgl. Right now I am considering [pixi.js](https://github.com/pixijs/pixi.js) due to its speed.
 
