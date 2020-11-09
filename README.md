@@ -7,7 +7,10 @@ In July 2017, [Adode announced that Flash player will be discontinued after Dece
 
 Strike Force Heroes, a Flash game made by Armor Games and Not Doppler, will be affected by this announcement. Therefore, Leif Clark (first initiator) wanted to make a sort of tribute to this game.
 
-## Current Plans (As of Nov. 4)
+## Nov. 9
+I did some tests in sfh 1. The hitboxes appear to be very basic and might not even rotate. Soldiers can clamber up ledges taller than themselves if they are near the top (I need to rethink the climbing mechanic). It seems rotation and complex hitboxes may not be necessary for collisions (rotation is still needed for animation however). As we have nearly solved these more complex issues it may be worth it to use them regardless.
+
+## Nov. 4
 (The following is speculation and subject to change)
 
 The game should be browser based like its predecessors. This will likely be done through javascript and some version of webgl. Right now I am considering [pixi.js](https://github.com/pixijs/pixi.js) due to its speed.
