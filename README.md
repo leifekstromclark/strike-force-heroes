@@ -16,7 +16,6 @@ Progress has been made on collision detection and response. The current algorith
 
 ### Nov. 4
 (The following is speculation and subject to change)
->>>>>>> main
 
 The game should be browser based like its predecessors. This will likely be done through javascript and some version of webgl. Right now I am considering [pixi.js](https://github.com/pixijs/pixi.js) due to its speed.
 
