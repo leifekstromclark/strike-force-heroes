@@ -5,12 +5,13 @@ A tribute to a one of remarkable Flash games, Strike Force Heroes.
 ## Background
 In July 2017, [Adode announced that Flash player will be discontinued after December 31, 2020](https://www.adobe.com/sea/products/flashplayer/end-of-life.html). This announcement has led to some Flash games publisher stopped accepting new games (like [kongregate.com](https://www.theverge.com/2020/7/2/21311318/kongregate-stops-accepting-new-game-submissions-flash-discontinued-layoffs)).
 
-Strike Force Heroes, a Flash game made by Armor Games and Not Doppler, will be affected by this announcement. Therefore, Leif Clark (first initiator) wanted to make a sort of tribute to this game.
+Strike Force Heroes, a Flash game sponsored by ArmorGames.com and NotDoppler.com, will be affected by this announcement. Therefore, Leif Clark (first initiator) wanted to make a sort of tribute to this game.
 
-## Nov. 9
+## Updates
+### Nov. 9
 I did some tests in sfh 1. The hitboxes appear to be very basic and might not even rotate. Soldiers can clamber up ledges taller than themselves if they are near the top (I need to rethink the climbing mechanic). It seems rotation and complex hitboxes may not be necessary for collisions (rotation is still needed for animation however). As we have nearly solved these more complex issues it may be worth it to use them regardless.
 
-## Nov. 4
+### Nov. 4
 (The following is speculation and subject to change)
 
 The game should be browser based like its predecessors. This will likely be done through javascript and some version of webgl. Right now I am considering [pixi.js](https://github.com/pixijs/pixi.js) due to its speed.
