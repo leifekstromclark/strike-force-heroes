@@ -147,13 +147,16 @@ def grounded_collision(rectangle, poly, velocity):
         if (side_1 <= 0 and side_2 <= 0) or (side_1 >= 0 and side_2 >= 0):
             to_project.append(poly.points[i])
         
-        co = points_to_coefficients(poly.points[(i + 1) % num_points], poly.points[i])
+        inc = (i + 1) % num_points
+        co = points_to_coefficients(poly.points[inc], poly.points[i])
         base_int = intersect(base_co1, co)
         if base_int:
-            to_project.append(base_int)
+            if min(poly.points[inc].x, poly.points[i].x) <= base_int.x <= max(poly.points[inc].x, poly.points[i].x) and min(poly.points[inc].y, poly.points[i].y) <= base_int.y <= max(poly.points[inc].y, poly.points[i].y):
+                to_project.append(base_int)
         base_int = intersect(base_co2, co)
         if base_int:
-            to_project.append(base_int)
+            if min(poly.points[inc].x, poly.points[i].x) <= base_int.x <= max(poly.points[inc].x, poly.points[i].x) and min(poly.points[inc].y, poly.points[i].y) <= base_int.y <= max(poly.points[inc].y, poly.points[i].y):
+                to_project.append(base_int)
     
     axis = (rectangle.points[1] - rectangle.points[0]).normalize()
 
