@@ -8,6 +8,9 @@ In July 2017, [Adode announced that Flash player will be discontinued after Dece
 Strike Force Heroes, a Flash game sponsored by ArmorGames.com and NotDoppler.com, will be affected by this announcement. Therefore, Leif Clark (first initiator) wanted to make a sort of tribute to this game.
 
 ## Updates
+### Nov. 10
+Added alternate collision detection and response for grounded player.
+
 ### Nov. 9
 I did some tests in sfh 1. The hitboxes appear to be very basic and might not even rotate. Soldiers can clamber up ledges taller than themselves if they are near the top (I need to rethink the climbing mechanic). It seems rotation and complex hitboxes may not be necessary for collisions (rotation is still needed for animation however). As we have nearly solved these more complex issues it may be worth it to use them regardless.
 
