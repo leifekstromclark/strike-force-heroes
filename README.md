@@ -11,6 +11,9 @@ Strike Force Heroes, a Flash game sponsored by ArmorGames.com and NotDoppler.com
 ### Nov. 9
 I did some tests in sfh 1. The hitboxes appear to be very basic and might not even rotate. Soldiers can clamber up ledges taller than themselves if they are near the top (I need to rethink the climbing mechanic). It seems rotation and complex hitboxes may not be necessary for collisions (rotation is still needed for animation however). As we have nearly solved these more complex issues it may be worth it to use them regardless.
 
+### Nov. 6
+Progress has been made on collision detection and response. The current algorithm, however, may be unnessesarily powerful and yield unwanted behaviour in some cases. It will be tweaked. Variations may also be created for certain cases.
+
 ### Nov. 4
 (The following is speculation and subject to change)
 
