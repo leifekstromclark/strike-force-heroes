@@ -1,3 +1,5 @@
+import math
+
 class Vector:
     def __init__(self, x, y):
         self.x = x
@@ -32,3 +34,10 @@ class Vector:
     
     def int(self):
         return Vector(int(self.x), int(self.y))
+    
+    def rotate(self, origin, rotation):
+        dx = self.x - origin.x
+        dy = self.y - origin.y
+        cos = math.cos(rotation)
+        sin = math.sin(rotation)
+        return Vector(origin.x + dx * cos + dy * -1 * sin, origin.y + dx * sin + dy * cos)
