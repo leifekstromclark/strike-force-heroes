@@ -9,21 +9,21 @@ Return the overall projection as an interval.
 def project_points(axis, points):
 
     #Iterate through points
-    minimum = False
+    minimum = None
     for point in points:
 
         #Take the dot product of the point and the axis (This accurately represents the point's location on the axis because we normalized the axis earlier).
         dot_product = axis.dot(point)
 
         #Update the minimum and maximum of the interval representing the projection as necessary.
-        if not minimum:
+        if minimum is None:
             minimum = dot_product
             maximum = dot_product
         elif dot_product < minimum:
             minimum = dot_product
         elif dot_product > maximum:
             maximum = dot_product
-        
+    
     return minimum, maximum
 
 '''
@@ -31,7 +31,7 @@ Calculate the distance between two intervals.
 Take two intervals represented by maximums and minimums.
 Return the distance between the intervals (It will be negative if they overlap).
 '''
-def interval_distance(minimum_a, maximum_a, minimum_b, maximum_b):
+def get_interval_distance(minimum_a, maximum_a, minimum_b, maximum_b):
     if minimum_a < minimum_b:
         return minimum_b - maximum_a
     else:
@@ -50,12 +50,14 @@ def air_collision(polygon_a, polygon_b, velocity):
     #Iterate through indices of points in both polygons.
     num_points_a = len(polygon_a.points)
     num_points_b = len(polygon_b.points)
-    for i in range(num_points_a + num_points_b):
 
+    for i in range(num_points_a + num_points_b):
+        
         #Create a vector representing an axis perpendicular to the edge between the ith point and the i+1th point.
         if i < num_points_a:
             inc = (i + 1) % num_points_a
             axis = vector.Vector(-1 * (polygon_a.points[inc].y - polygon_a.points[i].y), polygon_a.points[inc].x - polygon_a.points[i].x)
+
         else:
             i -= num_points_a
             inc = (i + 1) % num_points_b
@@ -78,9 +80,10 @@ def air_collision(polygon_a, polygon_b, velocity):
             maximum_a += velocity_projection
 
         #If the intervals do not overlap the polygons do not intersect during the move.
-        interval_distance = interval_distance(minimum_a, maximum_a, minimum_b, maximum_b)
+        interval_distance = get_interval_distance(minimum_a, maximum_a, minimum_b, maximum_b)
+
         if interval_distance > 0:
-            return False
+            return (False,)
         
         #If the interval distance is the smallest so far store it as well as the axis (flip if needed).
         interval_distance = abs(interval_distance)
@@ -89,9 +92,9 @@ def air_collision(polygon_a, polygon_b, velocity):
             translation_axis = axis
 
             if translation_axis.dot(polygon_a.center - polygon_b.center) < 0:
-                translation_axis = -1 * translation_axis
+                translation_axis = translation_axis * -1
 
-    return True, translation_axis * min_interval_distance
+    return (True, translation_axis * min_interval_distance)
 
 '''
 Finds coefficients of linear equation.
@@ -170,7 +173,7 @@ def grounded_collision(rectangle, poly, velocity):
     else:
         maximum_rect += velocity_projection
 
-    interval_distance = interval_distance(minimum_rect, maximum_rect, minimum_poly, maximum_poly)
+    interval_distance = get_interval_distance(minimum_rect, maximum_rect, minimum_poly, maximum_poly)
     if interval_distance > 0:
         return False
     
