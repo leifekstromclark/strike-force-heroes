@@ -45,7 +45,7 @@ Return a boolean representing intersection and a translation vector if needed.
 '''
 def air_collision(polygon_a, polygon_b, velocity):
 
-    min_interval_distance = False
+    min_interval_distance = None
 
     #Iterate through indices of points in both polygons.
     num_points_a = len(polygon_a.points)
@@ -87,7 +87,7 @@ def air_collision(polygon_a, polygon_b, velocity):
         
         #If the interval distance is the smallest so far store it as well as the axis (flip if needed).
         interval_distance = abs(interval_distance)
-        if not min_interval_distance or interval_distance < min_interval_distance:
+        if min_interval_distance is None or interval_distance < min_interval_distance:
             min_interval_distance = interval_distance
             translation_axis = axis
 
