@@ -16,3 +16,4 @@ class Polygon:
     def rotate(self, origin, rotation):
         for i in range(len(self.points)):
             self.points[i] = self.points[i].rotate(origin, rotation)
+        self.center = self.get_center()
