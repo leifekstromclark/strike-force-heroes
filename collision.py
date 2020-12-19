@@ -10,6 +10,7 @@ def project_points(axis, points):
 
     #Iterate through points
     minimum = None
+    maximum = None
     for point in points:
 
         #Take the dot product of the point and the axis (This accurately represents the point's location on the axis because we normalized the axis earlier).
@@ -32,10 +33,13 @@ Take two intervals represented by maximums and minimums.
 Return the distance between the intervals (It will be negative if they overlap).
 '''
 def get_interval_distance(minimum_a, maximum_a, minimum_b, maximum_b):
-    if minimum_a < minimum_b:
-        return minimum_b - maximum_a
-    else:
-        return minimum_a - maximum_b
+    dist_a = minimum_a - maximum_b
+    dist_b = minimum_b - maximum_a
+
+    if abs(dist_a) < abs(dist_b):
+        return dist_a
+    return dist_b
+
 
 '''
 Detect a collision between two convex polygons and return a translation vector that will slide them.
@@ -161,25 +165,28 @@ def grounded_collision(rectangle, poly, velocity):
             if min(poly.points[inc].x, poly.points[i].x) <= base_int.x <= max(poly.points[inc].x, poly.points[i].x) and min(poly.points[inc].y, poly.points[i].y) <= base_int.y <= max(poly.points[inc].y, poly.points[i].y):
                 to_project.append(base_int)
     
-    axis = (rectangle.points[1] - rectangle.points[0]).normalize()
+    if len(to_project) > 0:
+        axis = (rectangle.points[1] - rectangle.points[0]).normalize()
 
-    minimum_poly, maximum_poly = project_points(axis, to_project)
-    minimum_rect, maximum_rect = project_points(axis, (rectangle.points[0], rectangle.points[1]))
+        minimum_poly, maximum_poly = project_points(axis, to_project)
+        minimum_rect, maximum_rect = project_points(axis, (rectangle.points[0], rectangle.points[1]))
 
-    velocity_projection = axis.dot(velocity)
+        velocity_projection = axis.dot(velocity)
 
-    if velocity_projection < 0:
-        minimum_rect += velocity_projection
-    else:
-        maximum_rect += velocity_projection
+        if velocity_projection < 0:
+            minimum_rect += velocity_projection
+        else:
+            maximum_rect += velocity_projection
 
-    interval_distance = get_interval_distance(minimum_rect, maximum_rect, minimum_poly, maximum_poly)
-    if interval_distance > 0:
-        return False
-    
-    interval_distance = abs(interval_distance)
+        interval_distance = get_interval_distance(minimum_rect, maximum_rect, minimum_poly, maximum_poly)
 
-    if axis.dot(rectangle.center - poly.center) < 0:
-        axis = -1 * axis
-    
-    return True, axis * interval_distance
+        if interval_distance > 0:
+            return (False,)
+        
+        interval_distance = abs(interval_distance)
+
+        if axis.dot(rectangle.center - poly.center) < 0:
+            axis = axis * -1
+        
+        return (True, axis * interval_distance)
+    return (False,)
