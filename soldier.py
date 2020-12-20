@@ -20,143 +20,22 @@ class Soldier:
         self.heading = 0
     
     def update_position(self, terrain, gravity):
-        if self.grounded is None:
-            #apply gravity and horizontal movement to velocity
-            if self.velocity.y < 5:
-                self.velocity = vector.Vector(self.heading * self.walking_speed, self.velocity.y + gravity)
-            else:
-                self.velocity = vector.Vector(self.heading * self.walking_speed, self.velocity.y)
+        pass
 
-            #create modified_velocity
-            modified_velocity = self.velocity
-            landed = False
-            
-            #check all terrain for air collision
-            for i, chunk in enumerate(terrain): # MIGHT ADD THE FURTHER ITERATION THING
-                result = collision.air_collision(self.standing_rectangle, chunk.poly, self.velocity)
+        #compare position + velocity to endpoint of ground
 
-                #if collision
-                if result[0]:
-                    #if valid ground
-                    if chunk.ground:
-                        landed = self.land(terrain, i, modified_velocity, result[1])
-                        if landed:
-                            break
-                    else:
-                        modified_velocity += result[1]
-            if not landed:
-                self.translate(modified_velocity)
-                        
-        elif self.heading != 0:
-            ground = terrain[self.grounded]
-            ground_edge = ground.poly.points[1] - ground.poly.points[0]
-            #modify velocity to correct angle
-            modified_velocity = ground_edge.normalize() * self.heading * self.walking_speed
-
-            if self.heading == -1:
-                if ground.connect_left and self.position.x + modified_velocity.x < ground.poly.points[0].x:
-                    velocity_before = ground.poly.points[0] - self.position
-                    stop = False
-                    for i, chunk in enumerate(terrain):
-                        if i != self.grounded and i != self.grounded - 1:
-                            result = collision.grounded_collision(self.standing_rectangle, chunk.poly, velocity_before) #add crouch functionality
-                            if result[0]:
-                                velocity_before += result[1]
-                                stop = True
-                    
-                    self.translate(velocity_before)
-
-                    if not stop:
-                        next_ground = terrain[self.grounded - 1]
-                        next_ground_edge = next_ground.poly.points[1] - next_ground.poly.points[0]
-                        to_rotate = math.acos(vector.Vector(1, 0).dot(next_ground_edge) / next_ground_edge.get_magnitude())
-                        if next_ground.poly.points[1].y < next_ground.poly.points[0].y:
-                            to_rotate = to_rotate * -1
-                        self.standing_rectangle.rotate(self.position, -1 * self.rotation + to_rotate)
-
-                        for i, chunk in enumerate(terrain):
-                            if i != self.grounded and i != self.grounded - 1:
-                                result = collision.grounded_collision(self.standing_rectangle, chunk.poly, 0) #add crouch functionality
-                                if result[0]:
-                                    self.standing_rectangle.rotate(self.position, -1 * to_rotate + self.rotation)
-                                    stop = True
-                                    break
-                    
-                    
-                    if not stop:
-                        self.rotation = to_rotate
-                        self.grounded -= 1
-                        velocity_after = next_ground_edge.normalize() * (modified_velocity.get_magnitude() - velocity_before.get_magnitude())
-                        for i, chunk in enumerate(terrain):
-                            if i > self.grounded + 1 or i < self.grounded - 1:
-                                result = collision.grounded_collision(self.standing_rectangle, chunk.poly, velocity_after) #add crouch functionality
-                                if result[0]:
-                                    velocity_after += result[1]
-                    
-                    self.translate(velocity_after)
-                    
-                elif self.standing_rectangle.points[1].x + modified_velocity.x < ground.poly.points[0].x:
-                    velocity_before = ground.poly.points[0] - self.standing_rectangle.points[1]
-                    stop = False
-                    for i, chunk in enumerate(terrain):
-                        if i != self.grounded:
-                            result = collision.grounded_collision(self.standing_rectangle, chunk.poly, velocity_before) #add crouch functionality
-                            if result[0]:
-                                velocity_before += result[1]
-                                stop = True
-                    
-                    self.translate(velocity_before)
-
-                    if not stop:
-                        to_rotate = -1 * self.rotation
-                        self.rotation = 0
-                        self.standing_rectangle.rotate(self.standing_rectangle.points[1], to_rotate)
-
-                        for i, chunk in enumerate(terrain):
-                            if i != self.grounded:
-                                result = collision.grounded_collision(self.standing_rectangle, chunk.poly, 0) #add crouch functionality
-                                if result[0]:
-                                    self.standing_rectangle.rotate(self.standing_rectangle.points[1], -1 * to_rotate)
-                                    self.rotation = -1 * to_rotate
-                                    stop = True
-                                    break
-                    
-                    if not stop:
-                        self.position = self.position.rotate(self.standing_rectangle.points[1], -1 * to_rotate)
-                        velocity_after = vector.Vector(-1 * (modified_velocity.get_magnitude() - velocity_before.get_magnitude()), 0)
-                        for i, chunk in enumerate(terrain):
-                            if i != self.grounded:
-                                result = collision.grounded_collision(self.standing_rectangle, chunk.poly, velocity_after)
-                                if result[0]:
-                                    velocity_after += result[1]
-                    
-                    self.translate(velocity_after)
-                
-                else:
-                    for i, chunk in enumerate(terrain):
-                        if i != self.grounded and i != self.grounded - 1:
-                            result = collision.grounded_collision(self.standing_rectangle, chunk.poly, modified_velocity)
-                            if result[0]:
-                                modified_velocity += result[1]
-                    
-                    self.translate(modified_velocity)
-            else:
-                pass
-
-            #compare position + velocity to endpoint of ground
-            
-            #if position past a connected end
-                #split velocity into before and after
-                #check for collision and move before (stop after any of these steps if collision)
-                #check for collision and rotate
-                #if we get to rotate set grounded to new ground
-                #check for collision and move after
-            #if position past an edge + half width
-                #split velocity into before and after
-                #check for collision and move before (stop after any of these steps if collision)
-                #check for collision and rotate
-                #if we get to rotate set grounded to None
-                #check for collision and move after
+        #if position past a connected end
+            #split velocity into before and after
+            #check for collision and move before (stop after any of these steps if collision)
+            #check for collision and rotate
+            #if we get to rotate set grounded to new ground
+            #check for collision and move after
+        #if position past an edge + half width
+            #split velocity into before and after
+            #check for collision and move before (stop after any of these steps if collision)
+            #check for collision and rotate
+            #if we get to rotate set grounded to None
+            #check for collision and move after
     
     def land(self, terrain, i, modified_velocity, translation_vector):
         chunk = terrain[i]
