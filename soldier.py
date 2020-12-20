@@ -20,7 +20,32 @@ class Soldier:
         self.heading = 0
     
     def update_position(self, terrain, gravity):
-        pass
+        if self.grounded is None:
+            #apply gravity and horizontal movement to velocity
+            if self.velocity.y < 5:
+                self.velocity = vector.Vector(self.heading * self.walking_speed, self.velocity.y + gravity)
+            else:
+                self.velocity = vector.Vector(self.heading * self.walking_speed, self.velocity.y)
+
+            #create modified_velocity
+            modified_velocity = self.velocity
+            landed = False
+            
+            #check all terrain for air collision
+            for i, chunk in enumerate(terrain): # MIGHT ADD THE FURTHER ITERATION THING
+                result = collision.air_collision(self.standing_rectangle, chunk.poly, self.velocity)
+
+                #if collision
+                if result[0]:
+                    #if valid ground
+                    if chunk.ground:
+                        landed = self.land(terrain, i, modified_velocity, result[1])
+                        if landed:
+                            break
+                    else:
+                        modified_velocity += result[1]
+            if not landed:
+                self.translate(modified_velocity)
 
         #compare position + velocity to endpoint of ground
 
