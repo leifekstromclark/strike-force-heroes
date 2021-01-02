@@ -44,10 +44,10 @@ def get_interval_distance(minimum_a, maximum_a, minimum_b, maximum_b):
 '''
 Detect a collision between two convex polygons and return a translation vector that will slide them.
 This will be used for soldiers moving through the air.
-Take two polygons and a relative velocity.
+Take two polygons.
 Return a boolean representing intersection and a translation vector if needed.
 '''
-def air_collision(polygon_a, polygon_b, velocity):
+def air_collision(polygon_a, polygon_b):
 
     min_interval_distance = None
 
@@ -74,18 +74,8 @@ def air_collision(polygon_a, polygon_b, velocity):
         minimum_a, maximum_a = project_points(axis, polygon_a.points)
         minimum_b, maximum_b = project_points(axis, polygon_b.points)
 
-        #Project the velocity vector on the axis (See project_polygon).
-        velocity_projection = axis.dot(velocity)
-
-        #Add the velocity projection on the end of the interval of polygon_a's projection. This new interval will represent the interval spanned over the duration of motion.
-        if velocity_projection < 0:
-            minimum_a += velocity_projection
-        else:
-            maximum_a += velocity_projection
-
         #If the intervals do not overlap the polygons do not intersect during the move.
         interval_distance = get_interval_distance(minimum_a, maximum_a, minimum_b, maximum_b)
-
         if interval_distance > 0:
             return (False,)
         

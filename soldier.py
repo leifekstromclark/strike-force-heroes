@@ -37,33 +37,37 @@ class Soldier:
                 self.velocity = vector.Vector(self.heading * self.walking_speed, self.velocity.y)
 
             #create modified_velocity
-            modified_velocity = self.velocity
+            self.velocity
             landed = False
+            negations = [0]
             
+            self.translate(self.velocity)
             #check all terrain for air collision
             for i, chunk in enumerate(terrain): # MIGHT ADD THE FURTHER ITERATION THING
                 if i != previous:
-                    result = collision.air_collision(self.standing_rectangle, chunk.poly, self.velocity)
+
+                    result = collision.air_collision(self.standing_rectangle, chunk.poly)
 
                     #if collision
                     if result[0]:
+                        self.translate(result[1])
                         #if valid ground
                         if chunk.ground:
-                            landed = self.land(terrain, i, modified_velocity, result[1])
+                            landed = self.land(terrain, i, result[1])
                             if landed:
                                 break
-                        modified_velocity += result[1]
+                        if result[1].get_magnitude() != 0:
+                            negations.append(math.sin(math.acos(vector.Vector(1, 0).dot(result[1]) / result[1].get_magnitude())))
             
             if not landed:
-                self.translate(modified_velocity)
+                if self.velocity.y < 0:
+                    self.velocity -= vector.Vector(0, self.velocity.y * max(negations))
 
         elif self.heading != 0:
             self.run(terrain)
     
-    def land(self, terrain, i, modified_velocity, translation_vector):
+    def land(self, terrain, i, translation_vector):
         chunk = terrain[i]
-
-        modified_velocity += translation_vector
 
         #set to_ground to None
         to_ground = None
@@ -74,25 +78,25 @@ class Soldier:
         #create a vector representing the ground
         ground_edge = chunk.poly.points[1] - chunk.poly.points[0]
         # determine the sign of the slope of ground (ground will always be left to right)
-        if collision.side(chunk.poly.points[1], chunk.poly.points[0], self.standing_rectangle.points[3] + modified_velocity) > 0 and collision.side(chunk.poly.points[1], chunk.poly.points[0], self.standing_rectangle.points[2] + modified_velocity) > 0:
-            if chunk.poly.points[1].y >= chunk.poly.points[0].y: #might have to flip
+        if collision.side(chunk.poly.points[1], chunk.poly.points[0], self.standing_rectangle.points[3]) > 0 and collision.side(chunk.poly.points[1], chunk.poly.points[0], self.standing_rectangle.points[2]) > 0:
+            if chunk.poly.points[1].y >= chunk.poly.points[0].y:
                 #if left foot within ground x
-                if chunk.poly.points[0].x < self.standing_rectangle.points[0].x + modified_velocity.x < chunk.poly.points[1].x:
+                if chunk.poly.points[0].x < self.standing_rectangle.points[0].x < chunk.poly.points[1].x:
                     #if connection to the right and position after rotate will be off ground
-                    if chunk.connect_right and self.standing_rectangle.points[0].x + modified_velocity.x + ground_edge.normalize().x * self.width / 2 > chunk.poly.points[1].x:
+                    if chunk.connect_right and self.standing_rectangle.points[0].x + ground_edge.normalize().x * self.width / 2 > chunk.poly.points[1].x:
                         #keep falling - no adjustment
-                        modified_velocity -= translation_vector
+                        self.translate(-1 * translation_vector)
                     else:
                         #flip as normal
                         to_ground = i
-                        origin = self.standing_rectangle.points[0] + modified_velocity
+                        origin = self.standing_rectangle.points[0]
                         target = math.acos(vector.Vector(1, 0).dot(ground_edge) / ground_edge.get_magnitude())
                 # if right foot within ground x
-                elif chunk.poly.points[0].x < self.standing_rectangle.points[1].x + modified_velocity.x < chunk.poly.points[1].x:
+                elif chunk.poly.points[0].x < self.standing_rectangle.points[1].x < chunk.poly.points[1].x:
                     #flip around left end of ground
                     origin = chunk.poly.points[0]
                     # connection to the left and position after rotate will be off ground
-                    if chunk.connect_left and self.position.x + modified_velocity.x < chunk.poly.points[0].x: #changed this might have broken
+                    if chunk.connect_left and self.position.x < chunk.poly.points[0].x:
                         #flip onto left connect
                         to_ground = i - 1
                         connect_edge = terrain[to_ground].poly.points[1] - terrain[to_ground].poly.points[0]
@@ -103,20 +107,20 @@ class Soldier:
                         #flip onto ground
                         to_ground =  i
                         target = math.acos(vector.Vector(1, 0).dot(ground_edge) / ground_edge.get_magnitude())
-            else: #might have to flip
-                if chunk.poly.points[0].x < self.standing_rectangle.points[1].x + modified_velocity.x < chunk.poly.points[1].x:
-                    if chunk.connect_left and self.standing_rectangle.points[1].x + modified_velocity.x - ground_edge.normalize().x * self.width / 2 < chunk.poly.points[0].x:
+            else:
+                if chunk.poly.points[0].x < self.standing_rectangle.points[1].x < chunk.poly.points[1].x:
+                    if chunk.connect_left and self.standing_rectangle.points[1].x - ground_edge.normalize().x * self.width / 2 < chunk.poly.points[0].x:
                         #keep falling - no adjustment
-                        modified_velocity -= translation_vector
+                        self.translate(-1 * translation_vector)
                     else:
                         #flip as normal
                         to_ground = i
-                        origin = self.standing_rectangle.points[1] + modified_velocity
+                        origin = self.standing_rectangle.points[1]
                         target = -1 * math.acos(vector.Vector(1, 0).dot(ground_edge) / ground_edge.get_magnitude())
-                elif chunk.poly.points[0].x < self.standing_rectangle.points[0].x + modified_velocity.x < chunk.poly.points[1].x:
+                elif chunk.poly.points[0].x < self.standing_rectangle.points[0].x < chunk.poly.points[1].x:
                     #flip around right end of ground
                     origin = chunk.poly.points[1]
-                    if chunk.connect_right and self.position.x + modified_velocity.x >= chunk.poly.points[1].x: #changed this might have broken
+                    if chunk.connect_right and self.position.x >= chunk.poly.points[1].x:
                         #flip onto right connect
                         to_ground = i + 1
                         connect_edge = terrain[to_ground].poly.points[1] - terrain[to_ground].poly.points[0]
@@ -131,23 +135,18 @@ class Soldier:
         # land or dont land depending on results (set rotation and grounded and zero velocity) be sure to check collision on rotate (if collision dont rotate or land)
         if to_ground is not None:
             
-            self.translate(modified_velocity) #this is weird think about this
-            
             ignore = [to_ground]
             if terrain[to_ground].connect_left:
                 ignore.append(to_ground - 1)
             if terrain[to_ground].connect_right:
                 ignore.append(to_ground + 1)
 
-            success = self.rotate(terrain, origin, target, ignore, True) # doesnt matter if true or false
+            success = self.rotate(terrain, origin, target, ignore, True) # doesnt matter if last param is true or false
 
             if success:
                 self.grounded = to_ground
                 self.velocity = vector.Vector(0, 0)
                 return True
-            
-            self.translate(modified_velocity * -1)
-
         return False
 
     def run(self, terrain):
