@@ -18,12 +18,20 @@ class Soldier:
         self.walking_speed = walking_speed
         self.gun = gun
         self.heading = 0
+        self.jumped = False
     
-    def update_position(self, terrain, gravity):
+    def update_position(self, terrain, gravity, terminal_velocity):
+        
+        previous = None
+        if self.jumped:
+            result = self.jump(terrain)
+            if result[0]:
+                previous = result[1]
+            self.jumped = False
 
         if self.grounded is None:
             #apply gravity and horizontal movement to velocity
-            if self.velocity.y < 5: #terminal velocity add as parameter to stage
+            if self.velocity.y < terminal_velocity:
                 self.velocity = vector.Vector(self.heading * self.walking_speed, self.velocity.y + gravity)
             else:
                 self.velocity = vector.Vector(self.heading * self.walking_speed, self.velocity.y)
@@ -34,20 +42,21 @@ class Soldier:
             
             #check all terrain for air collision
             for i, chunk in enumerate(terrain): # MIGHT ADD THE FURTHER ITERATION THING
-                result = collision.air_collision(self.standing_rectangle, chunk.poly, self.velocity)
+                if i != previous:
+                    result = collision.air_collision(self.standing_rectangle, chunk.poly, self.velocity)
 
-                #if collision
-                if result[0]:
-                    #if valid ground
-                    if chunk.ground:
-                        landed = self.land(terrain, i, modified_velocity, result[1])
-                        if landed:
-                            break
-                    modified_velocity += result[1]
-                    
+                    #if collision
+                    if result[0]:
+                        #if valid ground
+                        if chunk.ground:
+                            landed = self.land(terrain, i, modified_velocity, result[1])
+                            if landed:
+                                break
+                        modified_velocity += result[1]
+            
             if not landed:
                 self.translate(modified_velocity)
-        
+
         elif self.heading != 0:
             self.run(terrain)
     
@@ -303,6 +312,27 @@ class Soldier:
             #if we get to rotate set grounded to None
             #check for collision and move after
     
+    def jump(self, terrain):
+
+        ground = terrain[self.grounded]
+
+        if ground.poly.points[1].y >= ground.poly.points[0].y:
+            origin = self.standing_rectangle.points[0]
+        else:
+            origin = self.standing_rectangle.points[1]
+        
+        success = self.rotate(terrain, origin, 0, (self.grounded,), True)
+
+        if success:
+            previous = self.grounded
+            self.grounded = None
+            self.crouched = False
+            self.velocity = vector.Vector(0, -10)
+            return (True, previous)
+        return (False,)
+
+        #implement some way to clear the ground on first frame
+    
     def translate(self, velocity):
         self.position += velocity
         self.standing_rectangle.translate(velocity)
@@ -328,12 +358,12 @@ class Soldier:
                 follower = self.crouched_rectangle
             
             #might make this a helper function (there are 2 occurances but i have no idea what to call the function or how to justify it)
-            if target == 0: #we can have funny conditionals in here because the only case where the origin is not one of these conditions is when self.rotation = 0 (see top conditional)
-                if origin == self.position:
+            if target == 0: #we can have funny conditionals in here because the only case where the origin is not one of these conditions is when self.rotation = 0 (see top conditional) (but right now imma justbe safe)
+                if origin.x == self.position.x and origin.y == self.position.y: #consider adding __eq__ __ne__ to vector
                     self.reset(origin, standing)
-                elif origin == rectangle.points[0]:
+                elif origin.x == rectangle.points[0].x and origin.y == rectangle.points[0].y: #consider adding __eq__ __ne__ to vector
                     self.reset(origin + vector.Vector(self.width / 2, 0), standing)
-                else: #origin == rectangle.points[1]:
+                elif origin.x == rectangle.points[1].x and origin.y == rectangle.points[1].y: #consider adding __eq__ __ne__ to vector
                     self.reset(origin + vector.Vector(self.width / -2, 0), standing)
             else:
                 rectangle.rotate(origin, target - self.rotation)
@@ -347,13 +377,13 @@ class Soldier:
                         break
             
             if success:
-                if target == 0: #we can have funny conditionals in here because the only case where the origin is not one of these conditions is when self.rotation = 0 (see top conditional)
-                    if origin == self.position:
+                if target == 0: #we can have funny conditionals in here because the only case where the origin is not one of these conditions is when self.rotation = 0 (see top conditional) (but right now imma justbe safe)
+                    if origin.x == self.position.x and origin.y == self.position.y: #consider adding __eq__ __ne__ to vector
                         self.reset(origin, not standing)
-                    elif origin == follower.points[0]:
+                    elif origin.x == follower.points[0].x and origin.y == follower.points[0].y: #consider adding __eq__ __ne__ to vector
                         self.position = origin + vector.Vector(self.width / 2, 0)
                         self.reset(self.position, not standing)
-                    else: #origin == follower.points[1]:
+                    elif origin.x == follower.points[1].x and origin.y == follower.points[1].y: #consider adding __eq__ __ne__ to vector
                         self.position = origin + vector.Vector(self.width / -2, 0)
                         self.reset(self.position, not standing)
                 else:
