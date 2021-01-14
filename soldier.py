@@ -18,16 +18,21 @@ class Soldier:
         self.walking_speed = walking_speed
         self.gun = gun
         self.heading = 0
-        self.jumped = False
+        self.jump_now = False
+        self.crouch_now = False
     
     def update_position(self, terrain, gravity, terminal_velocity):
-        
+        if self.crouch_now and not self.crouched:
+            self.crouched = True
+        elif not self.crouch_now and self.crouched:
+            self.uncrouch(terrain)
+
         previous = None
-        if self.jumped:
+        if self.jump_now:
             result = self.jump(terrain)
             if result[0]:
                 previous = result[1]
-            self.jumped = False
+            self.jump_now = False
 
         if self.grounded is None:
             #apply gravity and horizontal movement to velocity
@@ -152,28 +157,31 @@ class Soldier:
     def run(self, terrain):
         ground = terrain[self.grounded]
         ground_edge = ground.poly.points[1] - ground.poly.points[0]
-        #modify velocity to correct angle
-        modified_velocity = ground_edge.normalize() * self.heading * self.walking_speed
 
         if self.crouched:
             rectangle = self.crouched_rectangle
+            speed = self.walking_speed / 2
         else:
             rectangle = self.standing_rectangle
+            speed = self.walking_speed
+        
+        #modify velocity to correct angle
+        modified_velocity = ground_edge.normalize() * self.heading * speed
 
         if self.heading == -1:
             if ground.connect_left and self.position.x + modified_velocity.x < ground.poly.points[0].x:
                 velocity_before = ground.poly.points[0] - self.position
-                stop = False
+                success = True
                 for i, chunk in enumerate(terrain):
-                    if i != self.grounded and i != self.grounded - 1:
+                    if not (i == self.grounded or i == self.grounded - 1 or (ground.connect_right and i == self.grounded + 1)):
                         result = collision.grounded_collision(rectangle, chunk.poly, velocity_before) #add crouch functionality
                         if result[0]:
                             velocity_before += result[1]
-                            stop = True
+                            success = False
                 
                 self.translate(velocity_before)
 
-                if not stop:
+                if success:
                     next_ground = terrain[self.grounded - 1]
                     next_ground_edge = next_ground.poly.points[1] - next_ground.poly.points[0]
                     target = math.acos(vector.Vector(1, 0).dot(next_ground_edge) / next_ground_edge.get_magnitude())
@@ -186,7 +194,7 @@ class Soldier:
                     self.grounded -= 1
                     velocity_after = next_ground_edge.normalize() * (modified_velocity.get_magnitude() - velocity_before.get_magnitude())
                     for i, chunk in enumerate(terrain):
-                        if i > self.grounded + 1 or i < self.grounded - 1:
+                        if not (i == self.grounded or i == self.grounded + 1 or (ground.connect_left and i == self.grounded - 1)):
                             result = collision.grounded_collision(rectangle, chunk.poly, velocity_after) #add crouch functionality
                             if result[0]:
                                 velocity_after += result[1]
@@ -195,17 +203,17 @@ class Soldier:
                 
             elif rectangle.points[1].x + modified_velocity.x < ground.poly.points[0].x:
                 velocity_before = ground.poly.points[0] - rectangle.points[1]
-                stop = False
+                success = True
                 for i, chunk in enumerate(terrain):
-                    if i != self.grounded:
+                    if not (i == self.grounded or (ground.connect_right and i == self.grounded + 1)):
                         result = collision.grounded_collision(rectangle, chunk.poly, velocity_before) #add crouch functionality
                         if result[0]:
                             velocity_before += result[1]
-                            stop = True
+                            success = False
                 
                 self.translate(velocity_before)
 
-                if not stop:
+                if success:
                     success = self.rotate(terrain, self.standing_rectangle.points[1], 0, (self.grounded,), True)
                 
                 if success:
@@ -222,7 +230,7 @@ class Soldier:
             
             else:
                 for i, chunk in enumerate(terrain):
-                    if not (i == self.grounded or (ground.connect_left and i == self.grounded - 1)):
+                    if not (i == self.grounded or (ground.connect_left and i == self.grounded - 1) or (ground.connect_right and i == self.grounded + 1)):
                         result = collision.grounded_collision(rectangle, chunk.poly, modified_velocity)
                         if result[0]:
                             modified_velocity += result[1]
@@ -231,17 +239,17 @@ class Soldier:
         else:
             if ground.connect_right and self.position.x + modified_velocity.x > ground.poly.points[1].x:
                 velocity_before = ground.poly.points[1] - self.position
-                stop = False
+                success = True
                 for i, chunk in enumerate(terrain):
-                    if i != self.grounded and i != self.grounded + 1:
+                    if not (i == self.grounded or i == self.grounded + 1 or (ground.connect_left and i == self.grounded - 1)):
                         result = collision.grounded_collision(rectangle, chunk.poly, velocity_before) #add crouch functionality
                         if result[0]:
                             velocity_before += result[1]
-                            stop = True
+                            success = False
                 
                 self.translate(velocity_before)
 
-                if not stop:
+                if success:
                     next_ground = terrain[self.grounded + 1]
                     next_ground_edge = next_ground.poly.points[1] - next_ground.poly.points[0]
                     target = math.acos(vector.Vector(1, 0).dot(next_ground_edge) / next_ground_edge.get_magnitude())
@@ -253,7 +261,7 @@ class Soldier:
                     self.grounded += 1
                     velocity_after = next_ground_edge.normalize() * (modified_velocity.get_magnitude() - velocity_before.get_magnitude())
                     for i, chunk in enumerate(terrain):
-                        if i > self.grounded + 1 or i < self.grounded - 1:
+                        if not (i == self.grounded  or i == self.grounded + 1 or (ground.connect_right and i == self.grounded + 1)):
                             result = collision.grounded_collision(rectangle, chunk.poly, velocity_after) #add crouch functionality
                             if result[0]:
                                 velocity_after += result[1]
@@ -262,20 +270,20 @@ class Soldier:
                 
             elif rectangle.points[0].x + modified_velocity.x > ground.poly.points[1].x:
                 velocity_before = ground.poly.points[1] - rectangle.points[0]
-                stop = False
+                success = True
                 for i, chunk in enumerate(terrain):
-                    if i != self.grounded:
+                    if not (i == self.grounded or (ground.connect_left and i == self.grounded - 1)):
                         result = collision.grounded_collision(rectangle, chunk.poly, velocity_before) #add crouch functionality
                         if result[0]:
                             velocity_before += result[1]
-                            stop = True
+                            success = False
                 
                 self.translate(velocity_before)
 
-                if not stop:
+                if success:
                     success = self.rotate(terrain, self.standing_rectangle.points[0], 0, (self.grounded,), True)
                 
-                if not stop:
+                if success:
                     self.crouched = False
                     velocity_after = vector.Vector((modified_velocity.get_magnitude() - velocity_before.get_magnitude()), 0)
                     for i, chunk in enumerate(terrain):
@@ -289,7 +297,7 @@ class Soldier:
             
             else:
                 for i, chunk in enumerate(terrain):
-                    if not (i == self.grounded or (ground.connect_right and i == self.grounded + 1)):
+                    if not (i == self.grounded or (ground.connect_left and i == self.grounded - 1) or (ground.connect_right and i == self.grounded + 1)):
                         result = collision.grounded_collision(rectangle, chunk.poly, modified_velocity)
                         if result[0]:
                             modified_velocity += result[1]
@@ -310,6 +318,27 @@ class Soldier:
             #check for collision and rotate
             #if we get to rotate set grounded to None
             #check for collision and move after
+    
+    def uncrouch(self, terrain):
+        ground = terrain[self.grounded]
+        
+        ignore = [self.grounded]
+        if ground.connect_left:
+            ignore.append(self.grounded - 1)
+        if ground.connect_right:
+            ignore.append(self.grounded + 1)
+
+        success = True
+
+        for i, chunk in enumerate(terrain):
+            if not i in ignore:
+                result = collision.grounded_collision(self.standing_rectangle, chunk.poly, vector.Vector(0, 0)) #maybe this should be air? lets have a look at the collision algorithms later and optimize them a bit
+                if result[0]:
+                    success = False
+                    break
+
+        if success:
+            self.crouched = False
     
     def jump(self, terrain):
 

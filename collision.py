@@ -148,10 +148,12 @@ def grounded_collision(rectangle, poly, velocity):
         co = points_to_coefficients(poly.points[inc], poly.points[i])
         base_int = intersect(base_co1, co)
         if base_int:
+            base_int = base_int.round()
             if min(poly.points[inc].x, poly.points[i].x) <= base_int.x <= max(poly.points[inc].x, poly.points[i].x) and min(poly.points[inc].y, poly.points[i].y) <= base_int.y <= max(poly.points[inc].y, poly.points[i].y):
                 to_project.append(base_int)
         base_int = intersect(base_co2, co)
         if base_int:
+            base_int = base_int.round()
             if min(poly.points[inc].x, poly.points[i].x) <= base_int.x <= max(poly.points[inc].x, poly.points[i].x) and min(poly.points[inc].y, poly.points[i].y) <= base_int.y <= max(poly.points[inc].y, poly.points[i].y):
                 to_project.append(base_int)
     
@@ -167,7 +169,7 @@ def grounded_collision(rectangle, poly, velocity):
             minimum_rect += velocity_projection
         else:
             maximum_rect += velocity_projection
-
+        
         interval_distance = get_interval_distance(minimum_rect, maximum_rect, minimum_poly, maximum_poly)
 
         if interval_distance > 0:
@@ -175,7 +177,7 @@ def grounded_collision(rectangle, poly, velocity):
         
         interval_distance = abs(interval_distance)
 
-        if axis.dot(rectangle.center - poly.center) < 0:
+        if velocity.x > 0:
             axis = axis * -1
         
         return (True, axis * interval_distance)

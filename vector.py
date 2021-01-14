@@ -32,8 +32,8 @@ class Vector:
     def normalize(self):
         return self / self.get_magnitude()
     
-    def int(self):
-        return Vector(int(self.x), int(self.y))
+    def round(self):
+        return Vector(round(self.x), round(self.y))
     
     def rotate(self, origin, rotation):
         dx = self.x - origin.x
