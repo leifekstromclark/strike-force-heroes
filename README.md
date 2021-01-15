@@ -10,7 +10,7 @@ Strike Force Heroes, a Flash game sponsored by ArmorGames.com and NotDoppler.com
 
 ## Updates
 ### Jan. 14
-Movement complete apart from edge mantling.
+Movement related physics complete apart from edge mantling.
 
 ### Dec. 20
 Landing has been implemented. I am working on movement (debugging, organizing, and optimization).
