@@ -9,6 +9,8 @@ Strike Force Heroes, a Flash game sponsored by ArmorGames.com and NotDoppler.com
 
 Original SFH games can still be played using emulators and some downloadable projectors. [Sky9 Is now working on a remastered version of SFH1](https://www.youtube.com/watch?v=D8DCW2asa1U). Check out [Strike Force Heroes: Unification](https://discord.gg/NGaw7g2Vr8), another fan game, as well as the [the official SFH subreddit](https://www.reddit.com/r/StrikeForceHeroes/) and [discord server](https://discord.gg/p5zGTE4BWY).
 
+[Discord server for this project](https://discord.gg/3GvtYyNWEq) (unfortunately very dead at the moment)
+
 ## Updates
 ### Jul. 29
 Pixi implementation of physics engine is well underway.
