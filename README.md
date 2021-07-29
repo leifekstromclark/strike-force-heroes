@@ -9,6 +9,9 @@ In July 2017, [Adode announced that Flash player will be discontinued after Dece
 Strike Force Heroes, a Flash game sponsored by ArmorGames.com and NotDoppler.com, will be affected by this announcement. Therefore, Leif Clark (first initiator) wanted to make a sort of tribute to this game.
 
 ## Updates
+### Jul. 29
+Pixi implementation of physics engine is well underway.
+
 ### Jan. 14
 Movement related physics complete apart from edge mantling.
 
