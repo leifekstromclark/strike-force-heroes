@@ -8,7 +8,7 @@ In July 2017, [Adode announced that Flash player will be discontinued after Dece
 
 Strike Force Heroes, a Flash game sponsored by ArmorGames.com and NotDoppler.com, will be affected by this announcement. Therefore, Leif Clark (first initiator) wanted to make a sort of tribute to this game.
 
-Original SFH games can still be played using emulators and some downloadable projectors. [Sky9 Is now working on a remastered version of SFH1](https://www.youtube.com/watch?v=D8DCW2asa1U). Check out [Strike Force Heroes: Unification](https://discord.gg/NGaw7g2Vr8), another fan game, as well as the [the official SFH subreddit](https://www.reddit.com/r/StrikeForceHeroes/) [and discord server](https://discord.gg/p5zGTE4BWY).
+Original SFH games can still be played using emulators and some downloadable projectors. [Sky9 Is now working on a remastered version of SFH1](https://www.youtube.com/watch?v=D8DCW2asa1U). Check out [Strike Force Heroes: Unification](https://discord.gg/NGaw7g2Vr8), another fan game, as well as the [the official SFH subreddit](https://www.reddit.com/r/StrikeForceHeroes/) and [discord server](https://discord.gg/p5zGTE4BWY).
 
 ## Updates
 ### Jul. 29
