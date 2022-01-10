@@ -11,6 +11,8 @@ Original SFH games can still be played using emulators and some downloadable pro
 
 [Discord server for this project](https://discord.gg/3GvtYyNWEq) (unfortunately very dead at the moment)
 
+View demos [here](https://leifekstromclark.github.io).
+
 ## Updates
 ### Jul. 29
 Pixi implementation of physics engine is well underway.
