@@ -13,6 +13,13 @@ Original SFH games can still be played using emulators and some downloadable pro
 
 View demos [here](https://leifekstromclark.github.io).
 
+## Demo Videos
+### Movement
+https://user-images.githubusercontent.com/59668580/212800238-f6e0ed1a-4ac8-422d-b975-6e78860a41d9.mp4
+
+### Ledge Mantling
+https://user-images.githubusercontent.com/59668580/212800362-82cc2ae7-6dc8-45c1-ac97-6fa181aeeaa8.mp4
+
 ## Updates
 ### Jul. 29
 Pixi implementation of physics engine is well underway.
